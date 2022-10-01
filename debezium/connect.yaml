@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: connect
+  annotations:
+    app: connect
+  labels:
+    app: connect
+spec:
+  selector:
+    matchLabels:
+      app: connect
+  template:
+    metadata:
+      labels:
+        app: connect
+    spec:
+      containers:
+        - name: connect
+          image: quay.io/debezium/connect:1.9
+          ports:
+            - containerPort: 8083
+              protocol: TCP
+              name: http
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: kafka:9092
+            - name: GROUP_ID
+              value: "1"
+            - name: CONFIG_STORAGE_TOPIC
+              value: connect_configs
+            - name: OFFSET_STORAGE_TOPIC
+              value: connect_offsets
+            - name: STATUS_STORAGE_TOPIC
+              value: connect_statuses
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1Gi
+            requests:
+              cpu: 500m
+              memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: connect
+  labels:
+    app: connect
+spec:
+  type: ClusterIP
+  selector:
+    app: connect
+  ports:
+    - port: 8083
+      targetPort: 8083

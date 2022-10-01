@@ -1,0 +1,67 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: connect-ui
+  annotations:
+    app: connect-ui
+  labels:
+    app: connect-ui
+spec:
+  selector:
+    matchLabels:
+      app: connect-ui
+  template:
+    metadata:
+      labels:
+        app: connect-ui
+    spec:
+      containers:
+        - name: connect-ui
+          image: debezium/debezium-ui:1.9
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+              name: http
+          env:
+            - name: KAFKA_CONNECT_URIS
+              value: "http://connect:8083"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1Gi
+            requests:
+              cpu: 500m
+              memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: connect-ui
+  labels:
+    app: connect-ui
+spec:
+  type: ClusterIP
+  selector:
+    app: connect-ui
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: connect-ui
+  labels:
+    router: private
+    app: connect-ui
+spec:
+  host: CONNECT-UI
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: connect-ui
+    weight: 100
+  wildcardPolicy: None
+
