@@ -1,0 +1,15 @@
+---
+apiVersion: v2
+name: kafka
+description: Kafka Helm Chart
+
+type: application
+
+version: 0.0.0
+
+appVersion: "v0-0-0"
+
+dependencies:
+  - name: kafka
+    repository: https://charts.bitnami.com/bitnami
+    version: 18.3.1

@@ -1,0 +1,42 @@
+kafka:
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
+  persistence:
+    enabled: true
+    size: 2Gi
+  podSecurityContext:
+    enabled: false
+  containerSecurityContext:
+    enabled: false
+  externalAccess:
+    enabled: true
+    service:
+      loadBalancerNames: ["kafka-access"]
+
+  zookeeper:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: bitnami/zookeeper
+      registry: docker.io
+      tag: 3.8.0
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    persistence:
+      enabled: true
+      size: 1Gi
+    podSecurityContext:
+      enabled: false
+    containerSecurityContext:
+      enabled: false
